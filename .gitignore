@@ -1,0 +1,8 @@
+# UE build artifacts
+Binaries/
+Intermediate/
+DerivedDataCache/
+
+# OS
+.DS_Store
+Thumbs.db

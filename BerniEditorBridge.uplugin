@@ -1,0 +1,16 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "Berni Editor Bridge",
+	"Description": "Blueprint inspection and patching via local HTTP server",
+	"Category": "Editor",
+	"CreatedBy": "ReapAndRuin Dev",
+	"Modules": [
+		{
+			"Name": "BerniEditorBridge",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
+		}
+	]
+}
