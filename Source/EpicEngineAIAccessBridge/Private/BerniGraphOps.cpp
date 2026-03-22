@@ -463,14 +463,14 @@ TSharedPtr<FJsonObject> FBerniGraphOps::ApplyPatch(
 	FString BackupError;
 	if (!BackupAsset(AssetPath, BackupError))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[BerniEditorBridge] Backup failed: %s (continuing anyway)"), *BackupError);
+		UE_LOG(LogTemp, Warning, TEXT("[EpicEngineAIAccessBridge] Backup failed: %s (continuing anyway)"), *BackupError);
 	}
 
 	// Start a UE transaction for atomic rollback
 	bool bUseTransaction = GEditor != nullptr;
 	if (bUseTransaction)
 	{
-		GEditor->BeginTransaction(FText::FromString(TEXT("BerniEditorBridge Patch")));
+		GEditor->BeginTransaction(FText::FromString(TEXT("EpicEngineAIAccessBridge Patch")));
 		Graph->Modify();
 	}
 
@@ -552,7 +552,7 @@ TSharedPtr<FJsonObject> FBerniGraphOps::ApplyPatch(
 				bRolledBack = true;
 			}
 
-			UE_LOG(LogTemp, Warning, TEXT("[BerniEditorBridge] Op %d failed, rolled back all changes: %s"), i, *OpError);
+			UE_LOG(LogTemp, Warning, TEXT("[EpicEngineAIAccessBridge] Op %d failed, rolled back all changes: %s"), i, *OpError);
 			break;
 		}
 
@@ -931,7 +931,7 @@ bool FBerniGraphOps::ExecuteAddNode(UBlueprint* BP, UEdGraph* Graph, const FBern
 	// Register in our node map with the user-provided id
 	NodeMap.Add(Op.NodeId, NewNode);
 
-	UE_LOG(LogTemp, Log, TEXT("[BerniEditorBridge] Added node %s ('%s') at (%d,%d)"),
+	UE_LOG(LogTemp, Log, TEXT("[EpicEngineAIAccessBridge] Added node %s ('%s') at (%d,%d)"),
 		*Op.NodeClass, *Op.NodeId, Op.X, Op.Y);
 
 	return true;
@@ -952,7 +952,7 @@ bool FBerniGraphOps::ExecuteRemoveNode(UEdGraph* Graph, const FBerniPatchOperati
 	Graph->RemoveNode(Node);
 	NodeMap.Remove(Op.TargetNodeId);
 
-	UE_LOG(LogTemp, Log, TEXT("[BerniEditorBridge] Removed node '%s'"), *Op.TargetNodeId);
+	UE_LOG(LogTemp, Log, TEXT("[EpicEngineAIAccessBridge] Removed node '%s'"), *Op.TargetNodeId);
 	return true;
 }
 
@@ -970,7 +970,7 @@ bool FBerniGraphOps::ExecuteMoveNode(UEdGraph* Graph, const FBerniPatchOperation
 	Node->NodePosX = Op.X;
 	Node->NodePosY = Op.Y;
 
-	UE_LOG(LogTemp, Log, TEXT("[BerniEditorBridge] Moved node '%s' to (%d, %d)"), *Op.TargetNodeId, Op.X, Op.Y);
+	UE_LOG(LogTemp, Log, TEXT("[EpicEngineAIAccessBridge] Moved node '%s' to (%d, %d)"), *Op.TargetNodeId, Op.X, Op.Y);
 	return true;
 }
 
@@ -1005,7 +1005,7 @@ bool FBerniGraphOps::ExecuteConnect(UEdGraph* Graph, const FBerniPatchOperation&
 
 	FromPin->MakeLinkTo(ToPin);
 
-	UE_LOG(LogTemp, Log, TEXT("[BerniEditorBridge] Connected %s -> %s"), *Op.FromPinRef, *Op.ToPinRef);
+	UE_LOG(LogTemp, Log, TEXT("[EpicEngineAIAccessBridge] Connected %s -> %s"), *Op.FromPinRef, *Op.ToPinRef);
 	return true;
 }
 
@@ -1020,7 +1020,7 @@ bool FBerniGraphOps::ExecuteDisconnect(UEdGraph* Graph, const FBerniPatchOperati
 
 	FromPin->BreakLinkTo(ToPin);
 
-	UE_LOG(LogTemp, Log, TEXT("[BerniEditorBridge] Disconnected %s -> %s"), *Op.FromPinRef, *Op.ToPinRef);
+	UE_LOG(LogTemp, Log, TEXT("[EpicEngineAIAccessBridge] Disconnected %s -> %s"), *Op.FromPinRef, *Op.ToPinRef);
 	return true;
 }
 
@@ -1101,7 +1101,7 @@ bool FBerniGraphOps::ExecuteSetDefault(UEdGraph* Graph, const FBerniPatchOperati
 		Pin->DefaultValue = Op.Value;
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("[BerniEditorBridge] Set %s.%s = '%s'"), *Op.TargetNodeId, *Op.PinName, *Op.Value);
+	UE_LOG(LogTemp, Log, TEXT("[EpicEngineAIAccessBridge] Set %s.%s = '%s'"), *Op.TargetNodeId, *Op.PinName, *Op.Value);
 	return true;
 }
 
@@ -1120,7 +1120,7 @@ bool FBerniGraphOps::ExecuteSetComment(UEdGraph* Graph, const FBerniPatchOperati
 	Node->bCommentBubblePinned = !Op.Comment.IsEmpty();
 	Node->bCommentBubbleVisible = !Op.Comment.IsEmpty();
 
-	UE_LOG(LogTemp, Log, TEXT("[BerniEditorBridge] Set comment on '%s': '%s'"), *Op.TargetNodeId, *Op.Comment);
+	UE_LOG(LogTemp, Log, TEXT("[EpicEngineAIAccessBridge] Set comment on '%s': '%s'"), *Op.TargetNodeId, *Op.Comment);
 	return true;
 }
 
@@ -1206,7 +1206,7 @@ bool FBerniGraphOps::BackupAsset(const FString& AssetPath, FString& OutError)
 		return false;
 	}
 
-	FString BackupDir = FPaths::Combine(FPaths::ProjectSavedDir(), TEXT("BerniEditorBridge"), TEXT("Backups"));
+	FString BackupDir = FPaths::Combine(FPaths::ProjectSavedDir(), TEXT("EpicEngineAIAccessBridge"), TEXT("Backups"));
 	IFileManager::Get().MakeDirectory(*BackupDir, true);
 
 	FString Timestamp = FDateTime::UtcNow().ToString(TEXT("%Y%m%d_%H%M%S"));
@@ -1227,7 +1227,7 @@ bool FBerniGraphOps::BackupAsset(const FString& AssetPath, FString& OutError)
 	// Prune old backups
 	PruneBackups(AssetPath);
 
-	UE_LOG(LogTemp, Log, TEXT("[BerniEditorBridge] Backed up %s -> %s (stack depth: %d)"), *PackagePath, *BackupPath, Stack.Num());
+	UE_LOG(LogTemp, Log, TEXT("[EpicEngineAIAccessBridge] Backed up %s -> %s (stack depth: %d)"), *PackagePath, *BackupPath, Stack.Num());
 	return true;
 }
 
@@ -1267,7 +1267,7 @@ bool FBerniGraphOps::RestoreBackup(const FString& AssetPath, FString& OutError)
 	IFileManager::Get().Delete(*BackupPath);
 	Stack->RemoveAt(Stack->Num() - 1);
 
-	UE_LOG(LogTemp, Log, TEXT("[BerniEditorBridge] Restored %s from backup (remaining levels: %d)"), *AssetPath, Stack->Num());
+	UE_LOG(LogTemp, Log, TEXT("[EpicEngineAIAccessBridge] Restored %s from backup (remaining levels: %d)"), *AssetPath, Stack->Num());
 	return true;
 }
 
@@ -1282,11 +1282,11 @@ void FBerniGraphOps::PruneBackups(const FString& AssetPath)
 		FString OldestPath = (*Stack)[0];
 		IFileManager::Get().Delete(*OldestPath);
 		Stack->RemoveAt(0);
-		UE_LOG(LogTemp, Log, TEXT("[BerniEditorBridge] Pruned old backup: %s"), *OldestPath);
+		UE_LOG(LogTemp, Log, TEXT("[EpicEngineAIAccessBridge] Pruned old backup: %s"), *OldestPath);
 	}
 
 	// Age-based: scan backup directory for old files from any asset
-	FString BackupDir = FPaths::Combine(FPaths::ProjectSavedDir(), TEXT("BerniEditorBridge"), TEXT("Backups"));
+	FString BackupDir = FPaths::Combine(FPaths::ProjectSavedDir(), TEXT("EpicEngineAIAccessBridge"), TEXT("Backups"));
 	TArray<FString> Files;
 	IFileManager::Get().FindFiles(Files, *FPaths::Combine(BackupDir, TEXT("*.bak")), true, false);
 
@@ -1303,7 +1303,7 @@ void FBerniGraphOps::PruneBackups(const FString& AssetPath)
 			{
 				Pair.Value.Remove(FullPath);
 			}
-			UE_LOG(LogTemp, Log, TEXT("[BerniEditorBridge] Pruned expired backup: %s"), *FullPath);
+			UE_LOG(LogTemp, Log, TEXT("[EpicEngineAIAccessBridge] Pruned expired backup: %s"), *FullPath);
 		}
 	}
 }
@@ -1348,6 +1348,6 @@ bool FBerniGraphOps::CompileAndSave(UBlueprint* BP, FString& OutError)
 		}
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("[BerniEditorBridge] Compiled and saved: %s"), *BP->GetPathName());
+	UE_LOG(LogTemp, Log, TEXT("[EpicEngineAIAccessBridge] Compiled and saved: %s"), *BP->GetPathName());
 	return true;
 }

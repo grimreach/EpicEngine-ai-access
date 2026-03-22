@@ -36,7 +36,7 @@ void FBerniHttpServer::Start()
 
 	if (!Router)
 	{
-		UE_LOG(LogTemp, Error, TEXT("[BerniEditorBridge] Failed to create HTTP router on port %d"), BerniConstants::HttpPort);
+		UE_LOG(LogTemp, Error, TEXT("[EpicEngineAIAccessBridge] Failed to create HTTP router on port %d"), BerniConstants::HttpPort);
 		return;
 	}
 
@@ -130,7 +130,7 @@ void FBerniHttpServer::Start()
 	HttpModule.StartAllListeners();
 
 	bRunning = true;
-	UE_LOG(LogTemp, Warning, TEXT("[BerniEditorBridge] HTTP server listening on 127.0.0.1:%d"), BerniConstants::HttpPort);
+	UE_LOG(LogTemp, Warning, TEXT("[EpicEngineAIAccessBridge] HTTP server listening on 127.0.0.1:%d"), BerniConstants::HttpPort);
 }
 
 void FBerniHttpServer::Stop()
@@ -147,7 +147,7 @@ void FBerniHttpServer::Stop()
 	HttpModule.StopAllListeners();
 	bRunning = false;
 
-	UE_LOG(LogTemp, Log, TEXT("[BerniEditorBridge] HTTP server stopped."));
+	UE_LOG(LogTemp, Log, TEXT("[EpicEngineAIAccessBridge] HTTP server stopped."));
 }
 
 // ---------------------------------------------------------------------------

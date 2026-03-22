@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class BerniEditorBridge : ModuleRules
+public class EpicEngineAIAccessBridge : ModuleRules
 {
-	public BerniEditorBridge(ReadOnlyTargetRules Target) : base(Target)
+	public EpicEngineAIAccessBridge(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 

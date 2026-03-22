@@ -7,7 +7,7 @@
 
 class FBerniHttpServer;
 
-class FBerniEditorBridgeModule : public IModuleInterface
+class FEpicEngineAIAccessBridgeModule : public IModuleInterface
 {
 public:
 	virtual void StartupModule() override;

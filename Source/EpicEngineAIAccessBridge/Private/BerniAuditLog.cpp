@@ -7,8 +7,8 @@
 
 FBerniAuditLog::FBerniAuditLog()
 {
-	LogFilePath = FPaths::Combine(FPaths::ProjectSavedDir(), TEXT("Logs"), TEXT("BerniEditorBridge.log"));
-	UE_LOG(LogTemp, Log, TEXT("[BerniEditorBridge] Audit log: %s"), *LogFilePath);
+	LogFilePath = FPaths::Combine(FPaths::ProjectSavedDir(), TEXT("Logs"), TEXT("EpicEngineAIAccessBridge.log"));
+	UE_LOG(LogTemp, Log, TEXT("[EpicEngineAIAccessBridge] Audit log: %s"), *LogFilePath);
 }
 
 FBerniAuditLog::~FBerniAuditLog()
@@ -35,7 +35,7 @@ void FBerniAuditLog::LogRequest(
 	);
 
 	WriteToFile(Line);
-	UE_LOG(LogTemp, Log, TEXT("[BerniEditorBridge] %s"), *Line);
+	UE_LOG(LogTemp, Log, TEXT("[EpicEngineAIAccessBridge] %s"), *Line);
 }
 
 void FBerniAuditLog::LogSession(const FString& Token, const FString& Event)
@@ -48,7 +48,7 @@ void FBerniAuditLog::LogSession(const FString& Token, const FString& Event)
 	);
 
 	WriteToFile(Line);
-	UE_LOG(LogTemp, Log, TEXT("[BerniEditorBridge] %s"), *Line);
+	UE_LOG(LogTemp, Log, TEXT("[EpicEngineAIAccessBridge] %s"), *Line);
 }
 
 void FBerniAuditLog::WriteToFile(const FString& Line)

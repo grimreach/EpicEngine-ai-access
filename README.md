@@ -1,4 +1,4 @@
-# BerniEditorBridge Plugin
+# EpicEngineAIAccessBridge Plugin
 
 Editor-only UE 5.7 plugin that exposes a localhost HTTP API for programmatic Blueprint inspection and patching. Starts automatically when the editor loads — no UI or menu items.
 
@@ -7,7 +7,7 @@ Editor-only UE 5.7 plugin that exposes a localhost HTTP API for programmatic Blu
 - **Port:** 8523 (localhost only)
 - **Auto-starts** on editor launch, stops on shutdown
 - **Auth:** Token-based. Call `/session/open` first to get a bearer token
-- **Audit log:** `Saved/Logs/BerniEditorBridge.log`
+- **Audit log:** `Saved/Logs/EpicEngineAIAccessBridge.log`
 
 ## Authentication
 
@@ -159,7 +159,7 @@ Apply patch operations, compile, and save the Blueprint. **Atomic** — if any o
 }
 ```
 
-- Creates an automatic backup before applying (stored in `Saved/BerniEditorBridge/Backups/`)
+- Creates an automatic backup before applying (stored in `Saved/EpicEngineAIAccessBridge/Backups/`)
 - If any op fails, all changes are rolled back via UE transaction system
 - Compiles the Blueprint after applying all ops (skipped on rollback)
 - Saves the package to disk
@@ -540,18 +540,18 @@ This is an escape hatch — anything UE's Python API supports can be done throug
 ## File Structure
 
 ```
-Plugins/BerniEditorBridge/
-├── BerniEditorBridge.uplugin
-└── Source/BerniEditorBridge/
-    ├── BerniEditorBridge.Build.cs
+Plugins/EpicEngineAIAccessBridge/
+├── EpicEngineAIAccessBridge.uplugin
+└── Source/EpicEngineAIAccessBridge/
+    ├── EpicEngineAIAccessBridge.Build.cs
     ├── Private/
-    │   ├── BerniEditorBridgeModule.cpp    (module startup/shutdown)
+    │   ├── EpicEngineAIAccessBridgeModule.cpp    (module startup/shutdown)
     │   ├── BerniHttpServer.cpp            (HTTP routes and auth)
     │   ├── BerniGraphOps.cpp              (Blueprint inspect/validate/apply/undo)
     │   ├── BerniSceneOps.cpp              (scene/actor manipulation + Python exec)
     │   └── BerniAuditLog.cpp              (structured file logging)
     └── Public/
-        ├── BerniEditorBridgeModule.h
+        ├── EpicEngineAIAccessBridgeModule.h
         ├── BerniHttpServer.h
         ├── BerniGraphOps.h
         ├── BerniSceneOps.h
@@ -594,7 +594,7 @@ curl -s -X POST http://localhost:8523/bp/patch \
     "ops": [
       {"op": "removeNode", "targetNode": "K2Node_CallFunction_4"},
       {"op": "addNode", "class": "K2Node_VariableGet", "id": "getInv", "x": 400, "y": 550, "variableReference": "ReapAndRuinCharacter.InventoryComponent"},
-      {"op": "connect", "from": "K2Node_DynamicCast_0.AsReap and Ruin Character", "to": "getInv.self"},
+      {"op": "connect", "from": "K2Node_DynamicCast_0.AsPlayerCharacter", "to": "getInv.self"},
       {"op": "connect", "from": "getInv.InventoryComponent", "to": "K2Node_CallFunction_1.self"}
     ]
   }'
@@ -609,7 +609,7 @@ curl -s -X POST http://localhost:8523/bp/apply \
     "ops": [
       {"op": "removeNode", "targetNode": "K2Node_CallFunction_4"},
       {"op": "addNode", "class": "K2Node_VariableGet", "id": "getInv", "x": 400, "y": 550, "variableReference": "ReapAndRuinCharacter.InventoryComponent"},
-      {"op": "connect", "from": "K2Node_DynamicCast_0.AsReap and Ruin Character", "to": "getInv.self"},
+      {"op": "connect", "from": "K2Node_DynamicCast_0.AsPlayerCharacter", "to": "getInv.self"},
       {"op": "connect", "from": "getInv.InventoryComponent", "to": "K2Node_CallFunction_1.self"}
     ]
   }'

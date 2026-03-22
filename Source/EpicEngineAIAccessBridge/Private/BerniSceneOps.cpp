@@ -192,7 +192,7 @@ TSharedPtr<FJsonObject> FBerniSceneOps::SpawnActor(
 		NewActor->SetActorLabel(ActorLabel);
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("[BerniEditorBridge] Spawned actor '%s' (%s) at (%s)"),
+	UE_LOG(LogTemp, Log, TEXT("[EpicEngineAIAccessBridge] Spawned actor '%s' (%s) at (%s)"),
 		*NewActor->GetActorNameOrLabel(), *NewActor->GetClass()->GetName(), *Location.ToString());
 
 	return SerializeActor(NewActor);
@@ -225,7 +225,7 @@ TSharedPtr<FJsonObject> FBerniSceneOps::DeleteActor(const FString& ActorName, FS
 	Result->SetStringField(TEXT("deleted"), Label);
 	Result->SetStringField(TEXT("class"), Class);
 
-	UE_LOG(LogTemp, Log, TEXT("[BerniEditorBridge] Deleted actor '%s'"), *Label);
+	UE_LOG(LogTemp, Log, TEXT("[EpicEngineAIAccessBridge] Deleted actor '%s'"), *Label);
 
 	return Result;
 }
@@ -294,7 +294,7 @@ TSharedPtr<FJsonObject> FBerniSceneOps::SetTransform(
 	Result->SetStringField(TEXT("actor"), Actor->GetActorNameOrLabel());
 	Result->SetObjectField(TEXT("transform"), SerializeTransform(Actor->GetActorTransform()));
 
-	UE_LOG(LogTemp, Log, TEXT("[BerniEditorBridge] Set transform on '%s'"), *Actor->GetActorNameOrLabel());
+	UE_LOG(LogTemp, Log, TEXT("[EpicEngineAIAccessBridge] Set transform on '%s'"), *Actor->GetActorNameOrLabel());
 
 	return Result;
 }
@@ -382,7 +382,7 @@ TSharedPtr<FJsonObject> FBerniSceneOps::SetProperty(const FString& ActorName, co
 	Result->SetStringField(TEXT("property"), PropertyName);
 	Result->SetStringField(TEXT("value"), Value);
 
-	UE_LOG(LogTemp, Log, TEXT("[BerniEditorBridge] Set %s.%s = '%s'"), *ActorName, *PropertyName, *Value);
+	UE_LOG(LogTemp, Log, TEXT("[EpicEngineAIAccessBridge] Set %s.%s = '%s'"), *ActorName, *PropertyName, *Value);
 
 	return Result;
 }
@@ -444,7 +444,7 @@ TSharedPtr<FJsonObject> FBerniSceneOps::ExecutePython(const FString& Code, FStri
 	Result->SetStringField(TEXT("output"), CapturedOutput);
 	Result->SetNumberField(TEXT("lineCount"), LogLines.Num());
 
-	UE_LOG(LogTemp, Log, TEXT("[BerniEditorBridge] Executed Python (%d lines of output, success=%d)"),
+	UE_LOG(LogTemp, Log, TEXT("[EpicEngineAIAccessBridge] Executed Python (%d lines of output, success=%d)"),
 		LogLines.Num(), bSuccess ? 1 : 0);
 
 	return Result;

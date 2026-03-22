@@ -5,8 +5,8 @@
 #include "CoreMinimal.h"
 
 /**
- * Audit logger for BerniEditorBridge.
- * Writes structured log lines to Saved/Logs/BerniEditorBridge.log
+ * Audit logger for EpicEngineAIAccessBridge.
+ * Writes structured log lines to Saved/Logs/EpicEngineAIAccessBridge.log
  */
 class BERNIEDITORBRIDGE_API FBerniAuditLog
 {

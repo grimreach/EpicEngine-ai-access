@@ -8,7 +8,7 @@
 	"CreatedBy": "ReapAndRuin Dev",
 	"Modules": [
 		{
-			"Name": "BerniEditorBridge",
+			"Name": "EpicEngineAIAccessBridge",
 			"Type": "Editor",
 			"LoadingPhase": "Default"
 		}
