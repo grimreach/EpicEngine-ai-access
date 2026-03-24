@@ -918,6 +918,15 @@ bool FBerniGraphOps::ExecuteAddNode(UBlueprint* BP, UEdGraph* Graph, const FBern
 			}
 		}
 	}
+	else if (Op.NodeClass == TEXT("K2Node_CustomEvent") && !Op.Title.IsEmpty())
+	{
+		UK2Node_CustomEvent* EventNode = Cast<UK2Node_CustomEvent>(NewNode);
+		if (EventNode)
+		{
+			EventNode->CustomFunctionName = FName(*Op.Title);
+			bNeedsReconstruct = true;
+		}
+	}
 
 	if (bNeedsReconstruct)
 	{

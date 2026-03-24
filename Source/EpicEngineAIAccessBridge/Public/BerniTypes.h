@@ -75,6 +75,9 @@ struct FBerniPatchOperation
 	FString PinName;
 	FString Value;
 
+	// addNode: node title (used as CustomFunctionName for K2Node_CustomEvent)
+	FString Title;
+
 	// setComment
 	FString Comment;
 
@@ -110,6 +113,7 @@ struct FBerniPatchOperation
 		Obj->TryGetStringField(TEXT("targetNode"), Result.TargetNodeId);
 		Obj->TryGetStringField(TEXT("pin"), Result.PinName);
 		Obj->TryGetStringField(TEXT("value"), Result.Value);
+		Obj->TryGetStringField(TEXT("title"), Result.Title);
 		Obj->TryGetStringField(TEXT("comment"), Result.Comment);
 
 		return Result;
@@ -133,6 +137,7 @@ inline bool IsNodeClassAllowed(const FString& ClassName)
 		TEXT("K2Node_MakeStruct"),
 		TEXT("K2Node_Knot"),           // reroute
 		TEXT("K2Node_IsValidObject"),  // the IsValid we need for gating
+		TEXT("K2Node_CustomEvent"),
 		TEXT("K2Node_MacroInstance"),
 		TEXT("K2Node_TemporaryVariable"),
 	};
