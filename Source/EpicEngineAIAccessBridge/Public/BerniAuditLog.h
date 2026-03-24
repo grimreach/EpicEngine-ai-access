@@ -8,7 +8,7 @@
  * Audit logger for EpicEngineAIAccessBridge.
  * Writes structured log lines to Saved/Logs/EpicEngineAIAccessBridge.log
  */
-class BERNIEDITORBRIDGE_API FBerniAuditLog
+class EPICENGINEAIACCESSBRIDGE_API FBerniAuditLog
 {
 public:
 	FBerniAuditLog();

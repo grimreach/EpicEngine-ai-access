@@ -12,7 +12,7 @@ class UEdGraphNode;
 /**
  * Core Blueprint graph operations: inspect, validate, and apply patches.
  */
-class BERNIEDITORBRIDGE_API FBerniGraphOps : public TSharedFromThis<FBerniGraphOps>
+class EPICENGINEAIACCESSBRIDGE_API FBerniGraphOps : public TSharedFromThis<FBerniGraphOps>
 {
 public:
 	FBerniGraphOps();

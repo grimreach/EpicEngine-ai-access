@@ -14,6 +14,10 @@
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "Misc/PackageName.h"
 #include "Engine/Blueprint.h"
+#include "AssetToolsModule.h"
+#include "IAssetTools.h"
+#include "Factories/BlueprintFactory.h"
+#include "Misc/Paths.h"
 
 FBerniSceneOps::FBerniSceneOps()
 {
@@ -446,6 +450,73 @@ TSharedPtr<FJsonObject> FBerniSceneOps::ExecutePython(const FString& Code, FStri
 
 	UE_LOG(LogTemp, Log, TEXT("[EpicEngineAIAccessBridge] Executed Python (%d lines of output, success=%d)"),
 		LogLines.Num(), bSuccess ? 1 : 0);
+
+	return Result;
+}
+
+// ===========================================================================
+// Create Blueprint asset
+// ===========================================================================
+
+TSharedPtr<FJsonObject> FBerniSceneOps::CreateBlueprint(
+	const FString& ParentClass,
+	const FString& AssetPath,
+	const FString& AssetName,
+	FString& OutError)
+{
+	// Resolve parent class
+	UClass* BPParentClass = FindFirstObject<UClass>(*ParentClass, EFindFirstObjectOptions::None);
+	if (!BPParentClass)
+	{
+		BPParentClass = FindFirstObject<UClass>(*(TEXT("A") + ParentClass), EFindFirstObjectOptions::None);
+	}
+	if (!BPParentClass)
+	{
+		BPParentClass = FindFirstObject<UClass>(*(TEXT("U") + ParentClass), EFindFirstObjectOptions::None);
+	}
+	if (!BPParentClass)
+	{
+		OutError = FString::Printf(TEXT("Parent class '%s' not found."), *ParentClass);
+		return nullptr;
+	}
+
+	// Build the full package path
+	FString FullPath = AssetPath / AssetName;
+
+	// Check if asset already exists
+	FAssetRegistryModule& AssetRegistry = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(TEXT("AssetRegistry"));
+	FAssetData Existing = AssetRegistry.Get().GetAssetByObjectPath(FSoftObjectPath(FullPath + TEXT(".") + AssetName));
+	if (Existing.IsValid())
+	{
+		OutError = FString::Printf(TEXT("Blueprint '%s' already exists at '%s'."), *AssetName, *AssetPath);
+		return nullptr;
+	}
+
+	// Create via AssetTools
+	IAssetTools& AssetTools = FModuleManager::LoadModuleChecked<FAssetToolsModule>(TEXT("AssetTools")).Get();
+
+	UBlueprintFactory* Factory = NewObject<UBlueprintFactory>();
+	Factory->ParentClass = BPParentClass;
+
+	UObject* CreatedAsset = AssetTools.CreateAsset(AssetName, AssetPath, UBlueprint::StaticClass(), Factory);
+	if (!CreatedAsset)
+	{
+		OutError = FString::Printf(TEXT("Failed to create Blueprint '%s' in '%s'."), *AssetName, *AssetPath);
+		return nullptr;
+	}
+
+	UBlueprint* NewBP = Cast<UBlueprint>(CreatedAsset);
+
+	TSharedPtr<FJsonObject> Result = MakeShared<FJsonObject>();
+	Result->SetBoolField(TEXT("success"), true);
+	Result->SetStringField(TEXT("name"), AssetName);
+	Result->SetStringField(TEXT("path"), AssetPath);
+	Result->SetStringField(TEXT("fullPath"), FullPath);
+	Result->SetStringField(TEXT("parentClass"), BPParentClass->GetName());
+	Result->SetStringField(TEXT("generatedClass"), NewBP && NewBP->GeneratedClass ? NewBP->GeneratedClass->GetName() : TEXT(""));
+
+	UE_LOG(LogTemp, Log, TEXT("[EpicEngineAIAccessBridge] Created Blueprint '%s' (parent: %s) at '%s'"),
+		*AssetName, *BPParentClass->GetName(), *AssetPath);
 
 	return Result;
 }

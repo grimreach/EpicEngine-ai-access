@@ -17,7 +17,7 @@ class FBerniAuditLog;
 /**
  * Localhost-only HTTP server for Blueprint inspection, patching, scene manipulation, and scripting.
  */
-class BERNIEDITORBRIDGE_API FBerniHttpServer : public TSharedFromThis<FBerniHttpServer>
+class EPICENGINEAIACCESSBRIDGE_API FBerniHttpServer : public TSharedFromThis<FBerniHttpServer>
 {
 public:
 	FBerniHttpServer();
@@ -49,6 +49,9 @@ private:
 
 	// Route handlers — scripting
 	bool HandleExecPython(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete);
+
+	// Route handlers — blueprint creation
+	bool HandleSceneCreateBlueprint(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete);
 
 	// Auth
 	bool ValidateToken(const FHttpServerRequest& Request, FString& OutError);

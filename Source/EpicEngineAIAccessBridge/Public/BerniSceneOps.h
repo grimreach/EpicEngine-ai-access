@@ -10,7 +10,7 @@ class AActor;
 /**
  * Scene/level actor operations: list, find, spawn, delete, transform, properties.
  */
-class BERNIEDITORBRIDGE_API FBerniSceneOps : public TSharedFromThis<FBerniSceneOps>
+class EPICENGINEAIACCESSBRIDGE_API FBerniSceneOps : public TSharedFromThis<FBerniSceneOps>
 {
 public:
 	FBerniSceneOps();
@@ -53,6 +53,9 @@ public:
 
 	/** Execute a Python script and return output. */
 	TSharedPtr<FJsonObject> ExecutePython(const FString& Code, FString& OutError);
+
+	/** Create a new Blueprint asset from a parent class at the given content path. */
+	TSharedPtr<FJsonObject> CreateBlueprint(const FString& ParentClass, const FString& AssetPath, const FString& AssetName, FString& OutError);
 
 private:
 	UWorld* GetEditorWorld(FString& OutError);

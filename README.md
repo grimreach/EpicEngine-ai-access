@@ -511,6 +511,56 @@ Get or set properties on an actor. If `property` and `value` are present, sets t
 
 ---
 
+### POST /scene/create-blueprint
+
+Create a new Blueprint asset in the project's content directory.
+
+**Request body:**
+```json
+{
+  "parentClass": "Actor",
+  "path": "/Game/Blueprints",
+  "name": "BP_MyNewActor"
+}
+```
+
+| Field | Required | Description |
+|---|---|---|
+| `parentClass` | yes | UE class name to inherit from (e.g. `"Actor"`, `"Pawn"`, `"Character"`). Resolved with/without `A`/`U` prefix automatically. |
+| `path` | yes | Content-browser folder path. Must start with `/Game/`. |
+| `name` | yes | Asset name. Alphanumeric and underscores only. |
+
+**Response:**
+```json
+{
+  "success": true,
+  "name": "BP_MyNewActor",
+  "path": "/Game/Blueprints",
+  "fullPath": "/Game/Blueprints/BP_MyNewActor",
+  "parentClass": "Actor",
+  "generatedClass": "BP_MyNewActor_C"
+}
+```
+
+**Error cases:**
+- `400` — Missing or invalid `parentClass`, `path`, or `name`; name contains illegal characters; path does not start with `/Game/`
+- `400` — Blueprint with that name already exists at that path
+- `500` — Asset creation failed (parent class not found or AssetTools failure)
+
+**Sample curl:**
+```bash
+curl -s -X POST http://localhost:8523/scene/create-blueprint \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "parentClass": "Actor",
+    "path": "/Game/Blueprints",
+    "name": "BP_MyNewActor"
+  }'
+```
+
+---
+
 ## Python Scripting
 
 ### POST /exec/python
@@ -643,4 +693,10 @@ curl -s -X POST http://localhost:8523/exec/python \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"code": "print(len(unreal.EditorLevelLibrary.get_all_level_actors()))"}'
+
+# 12. Create a new Blueprint asset
+curl -s -X POST http://localhost:8523/scene/create-blueprint \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"parentClass": "Actor", "path": "/Game/Blueprints", "name": "BP_MyNewActor"}'
 ```

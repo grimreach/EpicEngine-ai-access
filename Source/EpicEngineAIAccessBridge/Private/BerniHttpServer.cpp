@@ -127,6 +127,13 @@ void FBerniHttpServer::Start()
 		FHttpRequestHandler::CreateSP(this, &FBerniHttpServer::HandleExecPython)
 	));
 
+	// Blueprint creation route
+	RouteHandles.Add(Router->BindRoute(
+		FHttpPath(TEXT("/scene/create-blueprint")),
+		EHttpServerRequestVerbs::VERB_POST,
+		FHttpRequestHandler::CreateSP(this, &FBerniHttpServer::HandleSceneCreateBlueprint)
+	));
+
 	HttpModule.StartAllListeners();
 
 	bRunning = true;
@@ -922,6 +929,79 @@ bool FBerniHttpServer::HandleExecPython(const FHttpServerRequest& Request, const
 	}
 
 	AuditLog->LogRequest(RequestId, TEXT("/exec/python"), TEXT(""), TEXT("python"), true, TEXT("ok"));
+	OnComplete(MakeJsonResponse(200, Result));
+	return true;
+}
+
+// ---------------------------------------------------------------------------
+// /scene/create-blueprint
+// ---------------------------------------------------------------------------
+
+bool FBerniHttpServer::HandleSceneCreateBlueprint(const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete)
+{
+	FString AuthError;
+	if (!ValidateToken(Request, AuthError))
+	{
+		OnComplete(MakeErrorResponse(401, AuthError));
+		return true;
+	}
+
+	TSharedPtr<FJsonObject> Body = ParseRequestBody(Request);
+	if (!Body)
+	{
+		OnComplete(MakeErrorResponse(400, TEXT("Invalid JSON body.")));
+		return true;
+	}
+
+	FString ParentClass = Body->GetStringField(TEXT("parentClass"));
+	FString AssetPath   = Body->GetStringField(TEXT("path"));
+	FString AssetName   = Body->GetStringField(TEXT("name"));
+	FString RequestId   = FGuid::NewGuid().ToString().Left(8);
+
+	if (ParentClass.IsEmpty())
+	{
+		OnComplete(MakeErrorResponse(400, TEXT("Missing required field 'parentClass'.")));
+		return true;
+	}
+	if (AssetPath.IsEmpty())
+	{
+		OnComplete(MakeErrorResponse(400, TEXT("Missing required field 'path'.")));
+		return true;
+	}
+	if (AssetName.IsEmpty())
+	{
+		OnComplete(MakeErrorResponse(400, TEXT("Missing required field 'name'.")));
+		return true;
+	}
+
+	// Validate name contains only safe characters
+	for (TCHAR Ch : AssetName)
+	{
+		if (!FChar::IsAlnum(Ch) && Ch != TEXT('_'))
+		{
+			OnComplete(MakeErrorResponse(400, TEXT("'name' must contain only alphanumeric characters and underscores.")));
+			return true;
+		}
+	}
+
+	// Validate path starts with /Game/
+	if (!AssetPath.StartsWith(TEXT("/Game/")))
+	{
+		OnComplete(MakeErrorResponse(400, TEXT("'path' must start with '/Game/'.")));
+		return true;
+	}
+
+	FString OpError;
+	TSharedPtr<FJsonObject> Result = SceneOps->CreateBlueprint(ParentClass, AssetPath, AssetName, OpError);
+
+	if (!Result)
+	{
+		AuditLog->LogRequest(RequestId, TEXT("/scene/create-blueprint"), AssetPath / AssetName, TEXT("createBlueprint"), false, OpError);
+		OnComplete(MakeErrorResponse(500, OpError));
+		return true;
+	}
+
+	AuditLog->LogRequest(RequestId, TEXT("/scene/create-blueprint"), AssetPath / AssetName, TEXT("createBlueprint"), true, TEXT("ok"));
 	OnComplete(MakeJsonResponse(200, Result));
 	return true;
 }
