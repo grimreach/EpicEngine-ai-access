@@ -918,8 +918,14 @@ bool FBerniGraphOps::ExecuteAddNode(UBlueprint* BP, UEdGraph* Graph, const FBern
 			}
 		}
 	}
-	else if (Op.NodeClass == TEXT("K2Node_CustomEvent") && !Op.Title.IsEmpty())
+	else if (Op.NodeClass == TEXT("K2Node_CustomEvent"))
 	{
+		if (Op.Title.IsEmpty())
+		{
+			OutError = TEXT("K2Node_CustomEvent requires a non-empty 'title' field for the event name.");
+			Graph->RemoveNode(NewNode);
+			return false;
+		}
 		UK2Node_CustomEvent* EventNode = Cast<UK2Node_CustomEvent>(NewNode);
 		if (EventNode)
 		{

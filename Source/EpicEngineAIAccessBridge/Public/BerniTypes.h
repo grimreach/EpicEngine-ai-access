@@ -65,6 +65,7 @@ struct FBerniPatchOperation
 	FString FunctionReference;   // "ClassName.FunctionName" for K2Node_CallFunction
 	FString VariableReference;   // "PropertyName" for K2Node_VariableGet/Set
 	FString CastClass;           // "ClassName" for K2Node_DynamicCast
+	FString Title;               // event name for K2Node_CustomEvent
 
 	// connect / disconnect
 	FString FromPinRef;  // "nodeId.pinName"
@@ -74,9 +75,6 @@ struct FBerniPatchOperation
 	FString TargetNodeId;
 	FString PinName;
 	FString Value;
-
-	// addNode: node title (used as CustomFunctionName for K2Node_CustomEvent)
-	FString Title;
 
 	// setComment
 	FString Comment;
